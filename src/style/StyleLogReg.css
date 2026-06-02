@@ -1,0 +1,86 @@
+.left-content {
+  padding: 20px;
+  background-color: #004bca;
+  height: 100vh;
+  width: 50%;
+}
+
+.circular {
+  position: relative;
+  bottom: 120px;
+  left: 300px;
+}
+
+.circular1 {
+  width: 200px;
+  height: 170px;
+  border-radius: 100%;
+  background-color: #ffffff25;
+  position: absolute;
+  top: 50px;
+  left: 60px;
+  z-index: 3;
+}
+
+.circular2 {
+  width: 260px;
+  height: 230px;
+  border-radius: 100%;
+  background-color: #ffffff1f;
+  position: absolute;
+  left: 30px;
+  top: 22px;
+  z-index: 2;
+}
+.circular3 {
+  width: 320px;
+  height: 280px;
+  border-radius: 100%;
+  background-color: #ffffff0d;
+  position: absolute;
+  z-index: 1;
+}
+
+.center-content {
+  position: relative;
+}
+
+.content {
+  position: absolute;
+  top: 230px;
+}
+
+.bottom-content {
+  position: relative;
+}
+
+.content-bottomm {
+  position: absolute;
+  top: 500px;
+}
+
+.regis-button {
+  width: 100%;
+  background-color: #d0e1fb;
+  border-radius: 10px;
+  padding: 15px;
+  justify-content: center;
+  color: #38485d;
+}
+
+.iconRight {
+  position: relative;
+}
+
+.starIcon {
+  position: absolute;
+  top: 390px;
+  left: 410px;
+}
+
+.chartIcon {
+  position: absolute;
+  top: 400px;
+  left: 420px;
+}
+  

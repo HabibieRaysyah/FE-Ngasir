@@ -42,7 +42,6 @@ export default function CategoryPage() {
 
   // Column Definitions: Defines the columns to be displayed.
   const [colDefs, setColDefs] = useState([
-    { field: "id", maxWidth: 90 },
     { field: "name" },
     {
       headerName: "Status",
@@ -262,9 +261,9 @@ export default function CategoryPage() {
       >
         <ModalHeader>
           <div className="block">
-            <h3>Buat Kategori Baru</h3>
+            <h3>Mengubah Kategori</h3>
             <p className="text-sm text-gray-500">
-              Lengkapi Informasi untuk membuat Kategori baru
+              Lengkapi Informasi untuk mengubah Kategori 
             </p>
           </div>
         </ModalHeader>
@@ -306,7 +305,7 @@ export default function CategoryPage() {
           <Button color="alternative" onClick={() => setOpenModalUpdate(false)}>
             Decline
           </Button>
-          <Button onClick={() => handleUpdate()}>Buat Kategori</Button>
+          <Button onClick={() => handleUpdate()}>Ubah Kategori</Button>
         </ModalFooter>
       </Modal>
 

@@ -185,7 +185,8 @@ export default function SuplierPage() {
 
   return (
     <div className="p-5">
-      <div className="flex justify-end">
+      <div className="flex justify-between">
+          <p className="text-2xl font-bold">Suplier</p>
         <Button className="mb-5" onClick={() => setOpenModal(true)}>
           + Tambah Kategori
         </Button>
@@ -310,7 +311,7 @@ export default function SuplierPage() {
           <Button color="alternative" onClick={() => setOpenModal(false)}>
             Decline
           </Button>
-          <Button onClick={() => handlePost()}>Buat Kategori</Button>
+          <Button onClick={() => handlePost()}>Buat Suplier</Button>
         </ModalFooter>
       </Modal>
 
@@ -322,9 +323,9 @@ export default function SuplierPage() {
       >
         <ModalHeader>
           <div className="block">
-            <h3>Menambahkan Supplier Baru</h3>
+            <h3>Mengubah Supplier</h3>
             <p className="text-sm text-gray-500">
-              Lengkapi Informasi untuk Menambahkan Suplier baru
+              Lengkapi Informasi untuk Mengubah Suplier 
             </p>
           </div>
         </ModalHeader>
@@ -415,7 +416,7 @@ export default function SuplierPage() {
           <Button color="alternative" onClick={() => setOpenModal(false)}>
             Decline
           </Button>
-          <Button onClick={() => handleUpdate()}>Buat Kategori</Button>
+          <Button onClick={() => handleUpdate()}>Ubah Suplier</Button>
         </ModalFooter>
       </Modal>
 

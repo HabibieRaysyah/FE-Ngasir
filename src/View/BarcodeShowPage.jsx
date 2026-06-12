@@ -52,7 +52,7 @@ export default function BarcodeShowPage() {
                   />
                 </div>
 
-                <span className="">{formatRupiah(filtered?.price)}</span>
+                <span className="">{formatRupiah(filtered?.selling_price)}</span>
               </div>
             ))}
         </div>

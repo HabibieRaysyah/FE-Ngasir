@@ -17,7 +17,7 @@ import { useContext, useEffect, useState } from "react";
 import api from "../utils/api";
 import { UserContext } from "../Context/UserContext";
 import AlertSuccess from "../Component/AlertSuccess";
-import { config, useSpring, animated, useTransition } from "react-spring";
+import { config,  animated, useTransition } from "react-spring";
 import PaginationComp from "../Component/PaginationComp";
 import { Link, redirect, useNavigate } from "react-router-dom";
 
@@ -64,7 +64,7 @@ export default function HomePage() {
       setIsSucess(true);
 
       setTimeout(() => {
-        setIsSucess(false);
+        setIsSucess(false); 
       }, 3000);
 handlleGetData( )
     } catch (err) {
@@ -156,7 +156,7 @@ handlleGetData( )
           </div>
         </div>
 
-        <div className="pt-10 flex flex-wrap max-w-5xl gap-2">
+        {toko? ( <div className="pt-10 h-100 flex flex-wrap max-w-5xl gap-2">
           {toko.data?.map((tokoks) => (
         <Link to={`/dashboard/${tokoks.Store.id}`}>
               <Card
@@ -181,7 +181,13 @@ handlleGetData( )
             </Card>
         </Link>
           ))}
-        </div>
+        </div>) : (
+          <div className="pt-10 flex flex-wrap max-w-5xl gap-2 justify-center">
+            <h1 className="text-3 xl h-100 text-center text-gray-300" style={{alignContent: "center"}}>Belum ada Toko</h1>
+          </div>
+        )}
+
+       
 
         <PaginationComp
           onPageChange={onPageChange}

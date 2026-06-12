@@ -1,4 +1,4 @@
-import { Card} from "flowbite-react/components/Card";
+import { Card } from "flowbite-react/components/Card";
 
 export default function CardDashComp({
   title,
@@ -13,19 +13,11 @@ export default function CardDashComp({
   subtitle,
   isSalary,
   cardValue,
+  persen,
 }) {
-  //   const CardTheme = {
-  //     root: {
-  //       base: "flex rounded-lg border border-gray-200 bg-white shadow-md dark:border-gray-700 dark:bg-gray-800",
-  //       children: "flex h-full flex-col justify-center gap-4 p-2",
-  //     },
-  //   };
-  console.log(Iconbg)
   return (
     <>
-      <Card
-        style={{ width: "100%", height: "auto", padding: "0px" }}
-      >
+      <Card style={{ width: "100%", height: "auto", padding: "0px" }}>
         <div className="flex justify-between">
           <div
             className={`p-2 w-8 ${Iconbg} rounded`}
@@ -47,7 +39,9 @@ export default function CardDashComp({
           {isSalary == "income" && (
             <div className="">
               <div className="bg-gray-300 rounded w-full h-1"></div>
-              <div className="bg-[#2563eb] rounded w-[50%] h-1 relative bottom-1"></div>
+              <div
+                className={`bg-[#2563eb] rounded ${persen} h-1 relative bottom-1`}
+              ></div>
             </div>
           )}
           <p style={{ fontSize: "12px" }}>{subtitle}</p>

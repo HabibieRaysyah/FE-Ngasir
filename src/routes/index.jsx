@@ -3,7 +3,7 @@ import App from "../App";
 import Registration from "../View/Registration";
 import HomePage from "../View/HomePage";
 import HomePageTemp from "../Template/HomePageTemp";
-import { auth } from "../../middleware/auth";
+import { auth } from "../middleware/auth";
 import DashboardPageTemp from "../Template/DashboardPageTemp";
 import DashboardPage from "../View/DashboardPage";
 import PostPage from "../View/PostPage";

@@ -40,7 +40,7 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const { id } = useParams();
   const [rowData, setRowData] = useState([]);
-  
+
   const [dashboardData, setDashboardData] = useState({
     todayIncome: 0,
     todayIncomePercentage: 0,
@@ -56,7 +56,7 @@ export default function DashboardPage() {
     yesterdayTransaction: 0,
     yesterdayProfit: 0,
   });
-  
+
   const [lowStockProducts, setLowStockProducts] = useState([]);
   const [loadingStock, setLoadingStock] = useState(false);
   const [allTransactions, setAllTransactions] = useState([]);
@@ -117,21 +117,23 @@ export default function DashboardPage() {
     return Math.abs(Math.round(percentage * 10) / 10);
   };
 
-  // Helper function to check if date is today
   const isToday = (date) => {
     const today = new Date();
-    return date.getDate() === today.getDate() &&
+    return (
+      date.getDate() === today.getDate() &&
       date.getMonth() === today.getMonth() &&
-      date.getFullYear() === today.getFullYear();
+      date.getFullYear() === today.getFullYear()
+    );
   };
 
-  // Helper function to check if date is yesterday
   const isYesterday = (date) => {
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1);
-    return date.getDate() === yesterday.getDate() &&
+    return (
+      date.getDate() === yesterday.getDate() &&
       date.getMonth() === yesterday.getMonth() &&
-      date.getFullYear() === yesterday.getFullYear();
+      date.getFullYear() === yesterday.getFullYear()
+    );
   };
 
   const fetchDashboardData = async () => {
@@ -139,72 +141,88 @@ export default function DashboardPage() {
       const transactionsRes = await api.get(`/transaction/${id}`);
       const allTransactionsData = transactionsRes.data.data || [];
       setAllTransactions(allTransactionsData);
-      
+
       const productsRes = await api.get(`/product/${id}`);
       const allProductsData = productsRes.data.data || [];
       setAllProducts(allProductsData);
-      
+
       const todayTransactions = [];
       const yesterdayTransactions = [];
-      
+
       for (const transaction of allTransactionsData) {
         const transactionDate = new Date(transaction.date);
-        
+
         if (isToday(transactionDate)) {
           todayTransactions.push(transaction);
         } else if (isYesterday(transactionDate)) {
           yesterdayTransactions.push(transaction);
         }
       }
-      
+
       let todayIncome = 0;
       let todayProfit = 0;
-      
+
       for (const transaction of todayTransactions) {
         todayIncome += Number(transaction.total_price || 0);
-        
-        const itemsRes = await api.get(`/transitems/${transaction.id}`);
-        const items = itemsRes.data.data || [];
-        
+
+        const today = new Date().toLocaleDateString("sv-SE");
+
+        const itemsRes = await api.get(`/transitems/${id}`);
+        const allitems = itemsRes.data.data;
+        const items = allitems.filter((item) => item.date?.startsWith(today));
         for (const item of items) {
-          const product = allProductsData.find(p => p.id === item.product_id);
+          const product = allProductsData.find((p) => p.id === item.product_id);
           if (product) {
-            const profitPerItem = Number(product.selling_price) - Number(product.purchase_price);
+            const profitPerItem =
+              Number(product.selling_price) - Number(product.purchase_price);
             todayProfit += profitPerItem * Number(item.quantity);
           }
         }
       }
-      
+
       // Calculate yesterday's income and profit
       let yesterdayIncome = 0;
       let yesterdayProfit = 0;
-      
+
       for (const transaction of yesterdayTransactions) {
         yesterdayIncome += Number(transaction.total_price || 0);
-        
+
         const itemsRes = await api.get(`/transitems/${transaction.id}`);
         const items = itemsRes.data.data || [];
-        
+
         for (const item of items) {
-          const product = allProductsData.find(p => p.id === item.product_id);
+          const product = allProductsData.find((p) => p.id === item.product_id);
           if (product) {
-            const profitPerItem = Number(product.selling_price) - Number(product.purchase_price);
+            const profitPerItem =
+              Number(product.selling_price) - Number(product.purchase_price);
             yesterdayProfit += profitPerItem * Number(item.quantity);
           }
         }
       }
-      
-      const incomePercentage = calculatePercentage(todayIncome, yesterdayIncome);
-      const profitPercentage = calculatePercentage(todayProfit, yesterdayProfit);
-      const transactionPercentage = calculatePercentage(todayTransactions.length, yesterdayTransactions.length);
-      
+
+      const incomePercentage = calculatePercentage(
+        todayIncome,
+        yesterdayIncome,
+      );
+      const profitPercentage = calculatePercentage(
+        todayProfit,
+        yesterdayProfit,
+      );
+      const transactionPercentage = calculatePercentage(
+        todayTransactions.length,
+        yesterdayTransactions.length,
+      );
+
       setDashboardData({
         todayIncome: todayIncome,
         todayIncomePercentage: incomePercentage,
         todayIncomeTrend: todayIncome >= yesterdayIncome ? "up" : "down",
         todayTransaction: todayTransactions.length,
         todayTransactionPercentage: transactionPercentage,
-        todayTransactionTrend: todayTransactions.length >= yesterdayTransactions.length ? "up" : "down",
+        todayTransactionTrend:
+          todayTransactions.length >= yesterdayTransactions.length
+            ? "up"
+            : "down",
         todayProfit: todayProfit,
         todayProfitPercentage: profitPercentage,
         todayProfitTrend: todayProfit >= yesterdayProfit ? "up" : "down",
@@ -213,7 +231,6 @@ export default function DashboardPage() {
         yesterdayTransaction: yesterdayTransactions.length,
         yesterdayProfit: yesterdayProfit,
       });
-      
     } catch (err) {
       console.log("Error fetching dashboard data:", err.message);
     }
@@ -222,16 +239,16 @@ export default function DashboardPage() {
   const fetchLowStockProducts = async () => {
     try {
       setLoadingStock(true);
-      const res = await api.get(`/products/store/${id}`);
+      const res = await api.get(`/product/${id}`);
       const products = res.data.data || [];
-      
+
       // Filter products where stock <= min_stock
-      const lowStock = products.filter(product => {
+      const lowStock = products.filter((product) => {
         const currentStock = Number(product.stock);
         const minStock = Number(product.min_stock);
         return currentStock <= minStock;
       });
-      
+
       setLowStockProducts(lowStock);
     } catch (err) {
       console.log("Error fetching low stock products:", err.message);
@@ -243,7 +260,7 @@ export default function DashboardPage() {
   const handleGet = async () => {
     try {
       setLoading(true);
-      
+
       // Fetch all transaction items
       const res = await api.get(`/transitems/${id}`);
       setRowData(res.data.data);
@@ -251,28 +268,29 @@ export default function DashboardPage() {
       // Fetch all transactions to get dates
       const transactionsRes = await api.get(`/transaction/${id}`);
       const transactions = transactionsRes.data.data || [];
-      
+
       // Create a map of transaction_id to date
       const transactionDateMap = new Map();
-      transactions.forEach(trans => {
+      transactions.forEach((trans) => {
         transactionDateMap.set(trans.id, trans.date);
       });
 
       // Group data per tanggal untuk chart
       const grouped = {};
-      
+
       for (const item of res.data.data) {
         const transactionDate = transactionDateMap.get(item.transaction_id);
-        
+
         if (transactionDate) {
           const date = new Date(transactionDate);
           const key = date.toLocaleDateString("id-ID", {
             day: "2-digit",
             month: "short",
           });
-          
+
           if (!grouped[key]) grouped[key] = 0;
-          const itemTotal = Number(item.subtotal) || (Number(item.price) * Number(item.quantity));
+          const itemTotal =
+            Number(item.subtotal) || Number(item.price) * Number(item.quantity);
           grouped[key] += itemTotal;
         }
       }
@@ -283,8 +301,8 @@ export default function DashboardPage() {
         const dateB = new Date(b);
         return dateA - dateB;
       });
-      
-      const sortedValues = sortedKeys.map(key => grouped[key]);
+
+      const sortedValues = sortedKeys.map((key) => grouped[key]);
 
       setChartData({
         labels: sortedKeys,
@@ -301,12 +319,8 @@ export default function DashboardPage() {
           },
         ],
       });
-      
-      await Promise.all([
-        fetchDashboardData(),
-        fetchLowStockProducts()
-      ]);
-      
+
+      await Promise.all([fetchDashboardData(), fetchLowStockProducts()]);
     } catch (err) {
       console.log("Server Error", err.message);
     } finally {
@@ -320,24 +334,25 @@ export default function DashboardPage() {
     }
   }, [id]);
 
-  console.log(dashboardData)
+  const targetPercentage = (
+    (dashboardData.todayIncome / dashboardData.dailyTarget) *
+    100
+  ).toFixed(1);
 
-  const targetPercentage = ((dashboardData.todayIncome / dashboardData.dailyTarget) * 100).toFixed(1);
-  
   const getTrendIcon = (trend) => {
     return trend === "up" ? FaArrowTrendUp : FaArrowTrendDown;
   };
-  
+
   const getBadgeColor = (trend) => {
     return trend === "up" ? "bg-[#f0fdf4]" : "bg-[#fef2f2]";
   };
-  
+
   const getBadgeTextColor = (trend) => {
     return trend === "up" ? "text-[#16a34a]" : "text-[#dc2626]";
   };
 
   return (
-    <div className="dashboard p-5">
+    <div className="dashboard p-5 h-145 overflow-auto">
       <div className="headers">
         <h1 className="text-2xl font-bold">Tampilan Dashboard</h1>
         <h2 className="text-lg font">
@@ -358,6 +373,7 @@ export default function DashboardPage() {
             wBadge={"w-20"}
             badgvalue={`${dashboardData.todayIncomePercentage}%`}
             cardValue={formatRupiah(dashboardData.todayIncome)}
+            persen={`w-[${Math.round(targetPercentage).toLocaleString}%]`}
             isSalary={"income"}
             subtitle={`${targetPercentage}% dari target harian`}
           />
@@ -369,8 +385,14 @@ export default function DashboardPage() {
             Iconcolor={"#000000"}
             Iconbg={"bg-gray-200"}
             badgcolor={getBadgeColor(dashboardData.todayTransactionTrend)}
-            badgetextcolor={getBadgeTextColor(dashboardData.todayTransactionTrend)}
-            badgvalue={dashboardData.todayTransactionTrend === "up" ? `+${dashboardData.todayTransactionPercentage}%` : `-${dashboardData.todayTransactionPercentage}%`}
+            badgetextcolor={getBadgeTextColor(
+              dashboardData.todayTransactionTrend,
+            )}
+            badgvalue={
+              dashboardData.todayTransactionTrend === "up"
+                ? `+${dashboardData.todayTransactionPercentage}%`
+                : `-${dashboardData.todayTransactionPercentage}%`
+            }
             wBadge={"w-21"}
             cardValue={dashboardData.todayTransaction.toString()}
             isSalary={"receipt"}
@@ -389,7 +411,7 @@ export default function DashboardPage() {
             badgvalue={`${dashboardData.todayProfitPercentage}%`}
             isSalary={"shopping"}
             cardValue={formatRupiah(dashboardData.todayProfit)}
-            subtitle={`${((dashboardData.todayProfit / dashboardData.todayIncome) * 100).toFixed(1)}% dari pendapatan`}
+            subtitle={`${((dashboardData.todayProfit / dashboardData.todayIncome) * 100).toFixed(1)}% dari pendapatan` }
           />
         </div>
       </div>
@@ -414,13 +436,13 @@ export default function DashboardPage() {
             )}
           </div>
         </div>
-        
+
         <Card className="w-[50%] h-80 overflow-auto">
           <div className="text-left">
             <p className="font-bold text-1xl">Stock Yang Menipis</p>
           </div>
           <hr className="text-gray-400" />
-          
+
           {loadingStock ? (
             <div className="text-center m-auto">
               <p className="text-gray-400">Loading stock data...</p>
@@ -428,15 +450,21 @@ export default function DashboardPage() {
           ) : lowStockProducts.length > 0 ? (
             <div className="space-y-3">
               {lowStockProducts.map((product) => (
-                <div key={product.id} className="flex justify-between items-center p-2 bg-gray-50 rounded-lg">
+                <div
+                  key={product.id}
+                  className="flex justify-between items-center p-2 bg-gray-50 rounded-lg"
+                >
                   <div>
                     <p className="font-medium text-gray-800">{product.name}</p>
                     <p className="text-sm text-gray-500">
-                      Min Stock: {product.min_stock} | Barcode: {product.barcode}
+                      Min Stock: {product.min_stock} | Barcode:{" "}
+                      {product.barcode}
                     </p>
                   </div>
                   <div className="text-right">
-                    <p className={`font-bold ${product.stock <= product.min_stock / 2 ? 'text-red-600' : 'text-orange-500'}`}>
+                    <p
+                      className={`font-bold ${product.stock <= product.min_stock / 2 ? "text-red-600" : "text-orange-500"}`}
+                    >
                       Stock: {product.stock}
                     </p>
                     {product.stock <= product.min_stock / 2 && (
@@ -451,7 +479,9 @@ export default function DashboardPage() {
           ) : (
             <div className="text-center m-auto">
               <p className="text-gray-400">✓ Stock Aman</p>
-              <p className="text-sm text-gray-300 mt-2">Semua produk memiliki stok di atas minimum yang ditentukan</p>
+              <p className="text-sm text-gray-300 mt-2">
+                Semua produk memiliki stok di atas minimum yang ditentukan
+              </p>
             </div>
           )}
         </Card>

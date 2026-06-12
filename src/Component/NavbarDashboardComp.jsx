@@ -19,16 +19,6 @@ export default function NavbarDashboardComp() {
         <span className="self-center whitespace-nowrap text-xl font-semibold dark:text-white">
           NGASIR
         </span>
-        <div className="max-w-sm">
-          <TextInput
-            id="email4"
-            type="email"
-            icon={HiSearch}
-            placeholder="Cari apapun..."
-            color="white"
-            required
-          />
-        </div>
       </NavbarBrand>
       <div className="flex md:order-2">
         <Dropdown

@@ -307,7 +307,7 @@ export default function PostPage() {
               </Button>
 
               <Button onClick={() => handleGetData(id)}>Semuanya</Button>
-              {categorie?.map((item, index) => (
+              {categorie?.filter((fil) => fil.status == true).map((item, index) => (
                 <div
                   key={index}
                   className="flex-nonflex items-center justify-center text-white text-2xl font-bold"
@@ -323,7 +323,7 @@ export default function PostPage() {
             </div>
           </div>
           <div className="mt-5 flex flex-wrap gap-5 overflow-auto h-100">
-            {products?.map((product, index) => (
+            {products?.filter((fil) => fil.status == true).map((product, index) => (
               <div
                 key={index}
                 onClick={() =>

@@ -7,10 +7,13 @@ import {
 import { BsBox2, BsClipboard2Data } from "react-icons/bs";
 import { CiDeliveryTruck, CiShoppingTag } from "react-icons/ci";
 import { FaRegChartBar } from "react-icons/fa";
-import { IoStatsChartOutline } from "react-icons/io5";
+import { IoPeopleOutline, IoStatsChartOutline } from "react-icons/io5";
 import { LuBoxes, LuLayoutDashboard } from "react-icons/lu";
 import { PiCashRegister } from "react-icons/pi";
+import { UserContext } from "../Context/UserContext";
 import { Link, useLocation, useParams } from "react-router-dom";
+import api from "../utils/api";
+import { useContext, useEffect, useState } from "react";
 
 export default function SidebarDashComp() {
   const customSidebarTheme = {
@@ -33,7 +36,20 @@ export default function SidebarDashComp() {
     },
   };
 
+  const { user } = useContext(UserContext);
+  console.log(user);
+  const [currentStores, setCurrentStores] = useState([]);
   const { id } = useParams();
+  const fetchStoreUser = async () => {
+    const res = await api.get("/store");
+    const storeUser = res.data.data;
+    console.log(storeUser);
+    const currentStore = storeUser?.filter(
+      (fill) => fill.store_id == id && fill.user_id == user.id,
+    );
+
+    setCurrentStores(currentStore);
+  };
 
   const location = useLocation();
   const current = location.pathname;
@@ -48,6 +64,11 @@ export default function SidebarDashComp() {
   const isTransactionItem = current == `/dashboard/${id}/transactionitems`;
   const isStock = current == `/dashboard/${id}/stock`;
 
+  // console.log(currentStores.role)
+
+  useEffect(() => {
+    fetchStoreUser();
+  }, [user]);
   return (
     <Sidebar
       className="border-r-stone-100"
@@ -84,68 +105,87 @@ export default function SidebarDashComp() {
               Post Kasir
             </SidebarItem>
           </div>
-          <div className="mb-5">
-            <p style={{ fontSize: "12px", color: "#7e7e7e" }}>Data Utama</p>
-            <SidebarItem
-              as={Link}
-              to={`/dashboard/${id}/category`}
-              icon={CiShoppingTag}
-              active={isCategory}
-            >
-              Kategori
-            </SidebarItem>{" "}
-            <SidebarItem
-              as={Link}
-              to={`/dashboard/${id}/suplier`}
-              icon={CiDeliveryTruck}
-              active={isSuplier}
-            >
-              Suplier
-            </SidebarItem>
-            <SidebarItem
-              as={Link}
-              to={`/dashboard/${id}/product`}
-              icon={BsBox2}
-              active={isProduct}
-            >
-              Produk
-            </SidebarItem>
-            <SidebarItem
-              as={Link}
-              to={`/dashboard/${id}/inventory`}
-              icon={BsClipboard2Data}
-              active={isInventory}
-            >
-              Inventaris
-            </SidebarItem>
-          </div>
-          <div>
-            <p style={{ fontSize: "12px", color: "#7e7e7e" }}>Laporan</p>
-            <SidebarItem
-              as={Link}
-              to={`/dashboard/${id}/transaction`}
-              icon={FaRegChartBar}
-              active={isTransaction}
-            >
-              Penjualan
-            </SidebarItem>{" "}
-            <SidebarItem
-              as={Link}
-              to={`/dashboard/${id}/transactionitems`}
-              icon={IoStatsChartOutline}
-              active={isTransactionItem}
-            >
-              Per Produk
-            </SidebarItem>
-            <SidebarItem
-              as={Link}
-              to={`/dashboard/${id}/stock`}
-              icon={LuBoxes}
-              active={isStock}
-            >
-              Stok
-            </SidebarItem>
-          </div>
+          {currentStores[0]?.role == "owner" ||
+          currentStores[0]?.role == "manager" ? (
+            <div>
+              {" "}
+              <div className="mb-5">
+                <p style={{ fontSize: "12px", color: "#7e7e7e" }}>Data Utama</p>
+                <SidebarItem
+                  as={Link}
+                  to={`/dashboard/${id}/category`}
+                  icon={CiShoppingTag}
+                  active={isCategory}
+                >
+                  Kategori
+                </SidebarItem>{" "}
+                <SidebarItem
+                  as={Link}
+                  to={`/dashboard/${id}/suplier`}
+                  icon={CiDeliveryTruck}
+                  active={isSuplier}
+                >
+                  Suplier
+                </SidebarItem>
+                <SidebarItem
+                  as={Link}
+                  to={`/dashboard/${id}/product`}
+                  icon={BsBox2}
+                  active={isProduct}
+                >
+                  Produk
+                </SidebarItem>
+                <SidebarItem
+                  as={Link}
+                  to={`/dashboard/${id}/inventory`}
+                  icon={BsClipboard2Data}
+                  active={isInventory}
+                >
+                  Inventaris
+                </SidebarItem>
+              </div>
+              <div className="mb-5">
+                <p style={{ fontSize: "12px", color: "#7e7e7e" }}>Laporan</p>
+                <SidebarItem
+                  as={Link}
+                  to={`/dashboard/${id}/transaction`}
+                  icon={FaRegChartBar}
+                  active={isTransaction}
+                >
+                  Penjualan
+                </SidebarItem>{" "}
+                <SidebarItem
+                  as={Link}
+                  to={`/dashboard/${id}/transactionitems`}
+                  icon={IoStatsChartOutline}
+                  active={isTransactionItem}
+                >
+                  Per Produk
+                </SidebarItem>
+                <SidebarItem
+                  as={Link}
+                  to={`/dashboard/${id}/stock`}
+                  icon={LuBoxes}
+                  active={isStock}
+                >
+                  Stok
+                </SidebarItem>
+              </div>
+              <div>
+                <p style={{ fontSize: "12px", color: "#7e7e7e" }}>Pegawai</p>
+                <SidebarItem
+                  as={Link}
+                  to={`/dashboard/${id}/transaction`}
+                  icon={IoPeopleOutline}
+                  active={isTransaction}
+                >
+                  Pegawai
+                </SidebarItem>
+              </div>
+            </div>
+          ) : (
+            ""
+          )}
           {/* <div>
             <p style={{ fontSize: "12px", color: "#7e7e7e" }}>
               Pegawai & Kasir
